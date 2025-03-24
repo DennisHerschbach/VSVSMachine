@@ -11,7 +11,7 @@ import tkinter as tk
 from tkinter import messagebox
 import keyboard
 
-def send_email(driver, recipient, subject, message):
+def send_email(driver, recipient, subject, message, cc_var):
     # print(recipient)
     # print(subject)
     # print(message)
@@ -29,7 +29,13 @@ def send_email(driver, recipient, subject, message):
             time.sleep(1)
             keyboard.press_and_release(",")
             time.sleep(1)
-            
+        
+        if cc_var.get():
+            keyboard.press_and_release("tab")
+            time.sleep(1)
+            keyboard.press_and_release("tab")
+            time.sleep(1)
+                
         # Subject line
         keyboard.press_and_release("tab")
         time.sleep(1)
@@ -97,7 +103,7 @@ def email_wizard(root, driver, df):
                 
                 if email_list and subject and message:
                     driver.switch_to.window(driver.window_handles[-1])
-                    send_email(driver, email_list, subject, message)
+                    send_email(driver, email_list, subject, message, cc_var)
                 else:
                     messagebox.showwarning("Warning", "All fields must be filled out!")
             else:
@@ -126,6 +132,12 @@ def email_wizard(root, driver, df):
 
     tk.Label(new_window, text="WARNING: Do not touch your keyboard or mouse while the email is being written").pack()
     
+    # Options section
+    tk.Label(new_window, text="Options:").pack(pady=(10, 0))
+    cc_var = tk.BooleanVar(value=True)
+    cc_checkbox = tk.Checkbutton(new_window, text="CC/BCC skip (see documentation)", variable=cc_var)
+    cc_checkbox.pack()
+    
 
 ####### FOR TESTING:
 
@@ -138,14 +150,14 @@ def email_wizard(root, driver, df):
 # df = mainImporter('25AccessMASTER.csv')
         
 # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-# driver.get("https://www.microsoft.com/en-us/microsoft-365/outlook/log-in")
-# time.sleep(5)  # Allow webpage to load
-# driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div/div[2]/main/div/div/div/div[6]/div/div/div[2]/div[1]/div/div/div[1]/div/div/div[3]/div/a[1]").click()
+# # driver.get("https://www.microsoft.com/en-us/microsoft-365/outlook/log-in")
+# # time.sleep(5)  # Allow webpage to load
+# # driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div/div[2]/main/div/div/div/div[6]/div/div/div[2]/div[1]/div/div/div[1]/div/div/div[3]/div/a[1]").click()
 
-# # Allow user to sign in manually
-# input("Press Enter after signing in...")
-# driver.switch_to.window(driver.window_handles[-1])
-# time.sleep(10)  # Allow time for inbox to load
+# # # Allow user to sign in manually
+# # input("Press Enter after signing in...")
+# # driver.switch_to.window(driver.window_handles[-1])
+# # time.sleep(10)  # Allow time for inbox to load
 
 # root = tk.Tk()
 # root.title("Email Sender")
