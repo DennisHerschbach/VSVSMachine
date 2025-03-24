@@ -71,7 +71,7 @@ def button2_action():
     if file_path:
         print(f"Selected file: '{file_path}'")
     df = mainImporter(file_path)
-    print("done!")
+    print("Done!")
 
 # Generate reports
 def button3_action():
@@ -86,8 +86,13 @@ def button3_action():
 #Start email Wizard
 def button4_action():
     global df
-    email_instructions()
-    print("Opening Outlook sign-in...")
+    
+    if df is not None:
+        print("Opening Outlook sign-in...")
+        email_instructions()
+    else:
+        print("Import data before sending emails!")
+        
 
 # placeholder
 def button5_action():

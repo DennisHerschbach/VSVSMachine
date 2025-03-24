@@ -3,60 +3,59 @@
 """
 Created on Thu Mar 20 16:42:29 2025
 
-@author: aptitude
+@author: Michael Herschbach
 """
+
 import time
 import tkinter as tk
 from tkinter import messagebox
 import keyboard
 
 def send_email(driver, recipient, subject, message):
-    print(recipient)
-    print(subject)
-    print(message)
+    # print(recipient)
+    # print(subject)
+    # print(message)
+    
     try:
-        time.sleep(2)  #wait
+        time.sleep(2)  # Wait
         
         # Compose new email
         keyboard.press_and_release("n")
         time.sleep(3)
         
-        # Put in each email, followed by comma
-        
-        # Note: probably could enter as one comma-separated string but this
-        # is more reliable and safe I think
+        # Enter each email followed by a comma
         for email in recipient:
             keyboard.write(email)
             time.sleep(1)
             keyboard.press_and_release(",")
             time.sleep(1)
             
-        # subject line
+        # Subject line
         keyboard.press_and_release("tab")
         time.sleep(1)
         keyboard.write(subject)
         time.sleep(1)
         
-        # message
+        # Message
         keyboard.press_and_release("tab")
         time.sleep(1)
         keyboard.write(message)
         time.sleep(1)
+        
+        # Send
         #keyboard.press_and_release("command+enter")  # macOS
-        # keyboard.press_and_release("ctrl+enter")  # Windows/Linux
+        # keyboard.press_and_release("ctrl+enter")  # 
         
     except Exception as e:
         print(f"Error: {e}")
-    #finally:
-        #driver.quit()
-
+    
 
 def email_wizard(root, driver, df):
     
     def submit_email():
-        groupList = entry_email.get().split(",")
+        group_list = entry_email.get().split(",")
         
-        for group in groupList:
+        for group in group_list:
             result = df.loc[df['Group Number'] == int(group), 'Email']
             if not result.empty:
                 email_list = result.values[0]
@@ -64,10 +63,10 @@ def email_wizard(root, driver, df):
                 subject = entry_subject.get()
                 message = text_message.get("1.0", tk.END).strip()
         
-                # setup variables for keywords
+                # Setup variables for keywords
                 team_number = group
                 
-                #set up matrix (team leader, names, emails)
+                # Set up matrix (team leader, names, emails)
                 first_names = df.loc[df['Group Number'] == int(group), 'First Name'].values
                 last_names = df.loc[df['Group Number'] == int(group), 'Last Name'].values
                 emails = df.loc[df['Group Number'] == int(group), 'Email'].values
@@ -75,10 +74,10 @@ def email_wizard(root, driver, df):
                 
                 matrix = "Team Leader: "
                 for j in range(len(first_names[0])):
-                    matrix = (matrix + first_names[0][j] + " " + last_names[0][j] + 
-                         ", " + phones[0][j] + ", " + emails[0][j]+ "\n")
+                    matrix += (first_names[0][j] + " " + last_names[0][j] + 
+                               ", " + phones[0][j] + ", " + emails[0][j] + "\n")
                     
-                #setup teacher block
+                # Set up teacher block
                 teacher = df.loc[df['Group Number'] == int(group), 'Teacher'].values
                 teacher_email = df.loc[df['Group Number'] == int(group), 'Teacher Email'].values
                 school = df.loc[df['Group Number'] == int(group), 'School'].values
@@ -86,12 +85,13 @@ def email_wizard(root, driver, df):
                 start_time = df.loc[df['Group Number'] == int(group), 'Start Time'].values
                 end_time = df.loc[df['Group Number'] == int(group), 'End Time'].values
                 
-                teacher_block = ("Teacher: " + teacher[0] + "\nEmail: " + teacher_email[0] + 
-                    "\nSchool: " + school[0] + "\nDay: " +
-                    day[0] + "\nTime: " + start_time[0] + " - " + end_time[0])
-
+                teacher_block = (
+                    "Teacher: " + teacher[0] + "\nEmail: " + teacher_email[0] + 
+                    "\nSchool: " + school[0] + "\nDay: " + day[0] + 
+                    "\nTime: " + start_time[0] + " - " + end_time[0]
+                )
     
-                #subject can ONLY handle team #
+                # Subject can ONLY handle team #
                 subject = subject.format(team_number=team_number)
                 message = message.format(team_number=team_number, matrix=matrix, tblock=teacher_block)
                 
@@ -102,9 +102,10 @@ def email_wizard(root, driver, df):
                     messagebox.showwarning("Warning", "All fields must be filled out!")
             else:
                 print(f"No emails found for group {group}")
-                return()
+                return
         
     
+    # Create new window
     new_window = tk.Toplevel(root)
     new_window.title("Email Wizard")
     new_window.geometry("500x700")
@@ -121,7 +122,7 @@ def email_wizard(root, driver, df):
     text_message = tk.Text(new_window, width=50, height=15)
     text_message.pack()
 
-    tk.Button(new_window, text="Send Email", command=lambda: submit_email()).pack()
+    tk.Button(new_window, text="Send Email", command=submit_email).pack()
 
     tk.Label(new_window, text="WARNING: Do not touch your keyboard or mouse while the email is being written").pack()
     
@@ -154,7 +155,7 @@ def email_wizard(root, driver, df):
 #     email_wizard(root, driver, df)
 #     print("Button clicked")
 
-# button = tk.Button(root, text="Proceed", command=lambda: emailbutton())
+# button = tk.Button(root, text="Proceed", command=emailbutton)
 # button.pack(pady=20)
 
 # root.mainloop()
