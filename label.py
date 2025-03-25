@@ -3,7 +3,7 @@
 """
 Created on Tue Feb 25 20:38:09 2025
 
-@author: aptitude
+@author: Michael Herschbach
 """
 
 import pandas as pd
@@ -231,62 +231,86 @@ def reportGen(df):
     def create_checkout(df):
         df_copy = df.copy()
         df_copy[df_copy.columns[0]] = pd.to_numeric(df_copy[df_copy.columns[0]], errors='coerce').fillna(0).astype(int)
+        df_copy.iloc[:, 7] = df_copy.iloc[:, 7].astype(str)  # Convert the column to string
         df_copy.iloc[:, 7] = df_copy.iloc[:, 7].apply(format_name)
         df_copy.iloc[:, 2] = df_copy.iloc[:, 1].str[0].str[0] + ". " + df_copy.iloc[:, 2].str[0]
         df_copy.rename(columns={"Group Number": "#", "Lesson 1": "Lesson", "Lesson 2": "Lesson", 
                                  "Lesson 3": "Lesson", "Lesson 4": "Lesson", "Lesson 5": "Lesson", "Lesson 6": "Lesson"}, inplace=True)
         df_copy = df_copy.applymap(lambda x: truncate_text(x, 15))
-        
+    
         df_copy["Box #"] = ""
-        df_copy["Time In"] = ""
-        df_copy["Additional Information                               "] = ""
-        
+        df_copy["Time Out"] = ""
+        df_copy["Additions"] = ""
+    
         weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday"]
         styles = getSampleStyleSheet()
-        
+    
         for i in range(6):
             output_pdf = f"checkout_week{i+1}.pdf"
             pdf = SimpleDocTemplate(output_pdf, pagesize=landscape(letter))
             elements = []
-            
+    
             for weekday in weekdays:
                 df_weekday = df_copy[df_copy.iloc[:, 8] == weekday]  # Assuming the weekday column is index 8
-                
+    
                 if not df_weekday.empty:
-                    df_checkout = df_weekday.iloc[:, [0, 9, 7, 13, 14 + i, 20, 21, 22]]
+                    df_checkout = df_weekday.iloc[:, [0, 9, 7, 13, 14 + i, 20, 21, 22]].copy()  # Add .copy()
                     
+                    # Ensure "Lesson" column has no NaN values before processing
+                    df_checkout["Lesson"] = df_checkout["Lesson"].fillna("Unknown")
+    
+                    # Import additions information
+                    quick_check = pd.read_csv("quick_check.csv")
+                    
+                    # Find first word of lesson in quick_check
+                    quick_check["First_Word"] = quick_check["Lesson Title"].str.split().str[0]
+
+                    # Compare and add additions
+                    for index, row in df_checkout.iterrows():
+                        lesson_title_first_word = row["Lesson"].split()[0]
+                        if lesson_title_first_word in quick_check["First_Word"].values:
+                            df_checkout.loc[:, "Additions"] = df_checkout["Lesson"].str.split().str[0].map(quick_check.set_index("First_Word")["Pick-Up Additions"]).fillna(" ")
+
+                    # paragraph format to allow wrap
+                    df_checkout.loc[:, "Additions"] = df_checkout["Additions"].apply(lambda x: Paragraph(str(x), style=styles["Normal"]))
+
                     data = [df_checkout.columns.tolist()] + df_checkout.values.tolist()
-                    table = Table(data, hAlign='LEFT')
-                    
+    
+                    col_widths = [None, None, None, None, None, None, None, 200]
+                    table = Table(data, colWidths=col_widths, hAlign='LEFT')
+    
                     style = TableStyle([
                         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
                         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
                         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'), 
                         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
                         ('FONTSIZE', (0, 0), (-1, -1), 10),
                         ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
                         ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                        ('WORDWRAP', (7, 0), (7, -1), True)
                     ])
+    
                     table.setStyle(style)
-                    
+    
                     table_title = "Week " + str(i+1) + " " + weekday
                     elements.append(Paragraph(table_title, styles['Title']))
                     elements.append(Spacer(1, 12))
                     elements.append(table)
-                    elements.append(PageBreak())  # Start a new page for each weekday
-            
+                    elements.append(PageBreak())
+    
             pdf.build(elements)
+
 
         
     create_checkout(df)
     
 
-##### TEST CODE
+# ##### TEST CODE
 
 
-# from importer import mainImporter
+from importer import mainImporter
 
-# df = mainImporter('25AccessMASTER.csv')
-# df.to_csv('test.csv', index=False)
+df = mainImporter('spring2025main.csv')
 
-# reportGen(df)
+reportGen(df)
