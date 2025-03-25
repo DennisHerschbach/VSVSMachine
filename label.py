@@ -306,11 +306,11 @@ def reportGen(df):
     create_checkout(df)
     
 
-# ##### TEST CODE
+# # ##### TEST CODE
 
 
-from importer import mainImporter
+# from importer import mainImporter
 
-df = mainImporter('spring2025main.csv')
+# df = mainImporter('spring2025main.csv')
 
-reportGen(df)
+# reportGen(df)
