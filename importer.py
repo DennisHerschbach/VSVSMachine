@@ -30,6 +30,7 @@ def sortImporter(file_path):
     aggregated_df["Teacher Email"] = ""
     aggregated_df["Teacher Phone"] = ""
     aggregated_df["School"] = ""
+    aggregated_df["Grade Level"] = ""
     
     # Add 6 empty lesson columns for each week
     for i in range(1, 7):  

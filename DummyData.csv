@@ -1,11 +1,11 @@
-Group Number,First Name,Last Name,Email,Phone Number,Team Leader,Board Member,Teacher,Day,Start Time,End Time,Teacher Email,Teacher Phone,School,Lesson 1,Lesson 2,Lesson 3,Lesson 4,Lesson 5,Lesson 6
-1,Albert ,Student,albert.student@vanderbilt.edu,615-000-0001,TRUE,,James Teacher,Tuesday,8:55 AM,9:55 AM,james.teacher@mnps.org,,Big Middle School,Blood Typing & Inheritance,Effects of CO2 on the Environment,Evidence for Chemical Reactions,Crazy Traits,--,--
-,Bill,Pupil,bill.pupil@vanderbilt.edu,615-000-0003,FALSE,,,,,,,,,,,,,,
-,Charlie,Mentee,charlie.mentee@vanderbilt.edu,615-222-0000,FALSE,,,,,,,,,,,,,,
-,Dereck,Classmate,dereck.classmate@vanderbilt.edu,615-000-1111,FALSE,,,,,,,,,,,,,,
-2,Allison,Intern,allison.intern@vanderbilt.edu,410-000-111,TRUE,,Jill Professor,Tuesday,10:59 AM,11:59 AM,jill.professor@mnps.org,,Large High School,Effects of CO2 on the Environment,Blood Typing & Inheritance,Evidence for Chemical Reactions,Crazy Traits,--,--
-,Chloe,Assistant,chloe.assistant@vanderbilt.edu,410-000-222,FALSE,,,,,,,,,,,,,,
-,Barbara,Protegee ,barbara.protegee@vanderbilt.edu,410-111-000,FALSE,,,,,,,,,,,,,,
-3,Jimmy,Bob,jimmy.bob@vanderbilt.edu,111-111-1111,TRUE,,Jonathon Doctor,Tuesday,12:00 PM,1:00 PM,jonathon.doctor@mnps.org,,Medium High School,Quantum Physics,Schrodinger,Dialysis,Wave Bending,--,--
-,Joe,Billy,joe.billy@vanderbilt.edu,111-111-1111,FALSE,,,,,,,,,,,,,,
-,Jerald,Brass,jerald.brass@vanderbilt.edu,111-111-1111,FALSE,,,,,,,,,,,,,,
+Group Number,First Name,Last Name,Email,Phone Number,Team Leader,Board Member,Teacher,Day,Start Time,End Time,Teacher Email,Teacher Phone,School,Grade Level,Lesson 1,Lesson 2,Lesson 3,Lesson 4,Lesson 5,Lesson 6
+1,Albert ,Student,albert.student@vanderbilt.edu,615-000-0001,TRUE,,James Teacher,Tuesday,8:55 AM,9:55 AM,james.teacher@mnps.org,,Big Middle School,6,Blood Typing & Inheritance,Effects of CO2 on the Environment,Evidence for Chemical Reactions,Crazy Traits,--,--
+,Bill,Pupil,bill.pupil@vanderbilt.edu,615-000-0003,FALSE,,,,,,,,,,,,,,,
+,Charlie,Mentee,charlie.mentee@vanderbilt.edu,615-222-0000,FALSE,,,,,,,,,,,,,,,
+,Dereck,Classmate,dereck.classmate@vanderbilt.edu,615-000-1111,FALSE,,,,,,,,,,,,,,,
+2,Allison,Intern,allison.intern@vanderbilt.edu,410-000-111,TRUE,,Jill Professor,Tuesday,10:59 AM,11:59 AM,jill.professor@mnps.org,,Large High School,7,Effects of CO2 on the Environment,Blood Typing & Inheritance,Evidence for Chemical Reactions,Crazy Traits,--,--
+,Chloe,Assistant,chloe.assistant@vanderbilt.edu,410-000-222,FALSE,,,,,,,,,,,,,,,
+,Barbara,Protegee ,barbara.protegee@vanderbilt.edu,410-111-000,FALSE,,,,,,,,,,,,,,,
+3,Jimmy,Bob,jimmy.bob@vanderbilt.edu,111-111-1111,TRUE,,Jonathon Doctor,Tuesday,12:00 PM,1:00 PM,jonathon.doctor@mnps.org,,Medium High School,8,Quantum Physics,Schrodinger,Dialysis,Wave Bending,--,--
+,Joe,Billy,joe.billy@vanderbilt.edu,111-111-1111,FALSE,,,,,,,,,,,,,,,
+,Jerald,Brass,jerald.brass@vanderbilt.edu,111-111-1111,FALSE,,,,,,,,,,,,,,,

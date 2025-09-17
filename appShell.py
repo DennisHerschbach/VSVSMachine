@@ -12,8 +12,8 @@ import sys
 import time
 from tkinter import messagebox
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+#from selenium.webdriver.chrome.service import Service
+#from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 
 # Import custom functions
@@ -26,7 +26,9 @@ df = None
 
 def email_instructions():
     try:
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        #driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        driver = webdriver.Chrome()
+
         driver.get("https://www.microsoft.com/en-us/microsoft-365/outlook/log-in")
         time.sleep(5)  # Allow webpage to load
         
@@ -116,8 +118,8 @@ buttons = [
     ("Import from Sorter", button1_action),
     ("Import from MAIN", button2_action),
     ("Generate Reports", button3_action),
-    ("Email Wizard", button4_action),
-    ("PLACEHOLDER", button5_action)
+    ("Email Wizard", button4_action)
+    #("PLACEHOLDER", button5_action)
 ]
 for text, command in buttons:
     btn = tk.Button(button_frame, text=text, command=command, width=15)

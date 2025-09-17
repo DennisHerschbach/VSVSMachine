@@ -15,7 +15,33 @@ from reportlab.lib.styles import getSampleStyleSheet
 
 def reportGen(df):
     
-    #sort mon-fri, by times
+    #   SETUP
+    #######################################
+    
+    # Set indexes so that if the format of the CSV needs to be altered, the code does not break
+    i_gn = 0    # group number 
+    i_fn = 1    # first name
+    i_ln = 2    # last name
+    i_em = 3    # email
+    i_pn = 4    # phone
+    i_tl = 5    # team leader
+    i_bm = 6    # board member
+    i_tc = 7    # teacher
+    i_dy = 8    # day
+    i_st = 9    # start time
+    i_et = 10   # end time
+    i_te = 11   # teacher email
+    i_tp = 12   # teacher phone
+    i_sc = 13   # school
+    i_gl = 14   # grade level
+    i_l1 = 15   # lesson 1
+    i_l2 = 16   # lesson 2
+    i_l3 = 17   # lesson 3
+    i_l4 = 18   # lesson 4
+    i_l5 = 19   # lesson 5
+    i_l6 = 20   # lesson 6
+    
+    # To sort mon-fri, by times
     day_order = {'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5}
 
     # Convert 'Start Time' to a datetime object
@@ -27,14 +53,19 @@ def reportGen(df):
     # Drop the converted time column
     df = df.drop(columns=['Converted Time'])
 
+    # Truncates input string {text} to {max_length} characters
     def truncate_text(text, max_length):
         text = str(text)
         return text[:max_length] if len(text) > max_length else text
     
+    # Converts {name} to format F. Lastname
+    # For Teacher name since in a single column
     def format_name(name):
         parts = str(name).split()
         return f"{parts[0][0]}. {parts[-1]}" if len(parts) > 1 else name
     
+    # Converts {F name}, {L name} to format F. Lastname
+    # For student names since in two columns
     def format_initial_lastname(first_names, last_names):
         if isinstance(first_names, list) and isinstance(last_names, list) and first_names and last_names:
             return f"{first_names[0][0].upper()}. {last_names[0]}"
@@ -81,9 +112,9 @@ def reportGen(df):
             nameHolder.extend(["", ""])
             tab = "            "
             label_text = [
-                f"**Team {int(row[0])}**{tab}{tab}{row[8]} @ {row[9]}",
-                f"**Lesson:** {row[14+week]}",
-                f"Teacher: {format_name(row[7])}{tab}School: {truncate_text(row[13],10)}",
+                f"**Team {int(row[i_gn])}**{tab}{tab}{row[i_dy]} @ {row[i_st]}",
+                f"**Lesson:** {row[i_l1+week]}",
+                f"Teacher: {format_name(row[i_tc])}{tab}School: {truncate_text(row[i_sc],10)}",
                 f"Group: {nameHolder[0]}",
                 f"{tab}{nameHolder[1]}",
                 f"{tab}{nameHolder[2]}"
@@ -104,19 +135,27 @@ def reportGen(df):
     for week in range(6):
         create_labels_from_csv(df, f"label_w{week+1}.pdf", week)
     
+    
+    # Printable format of datasheet
     def create_table_pdf(df, output_pdf):
         df_copy = df.copy()
         
         df_copy[df_copy.columns[0]] = pd.to_numeric(df_copy[df_copy.columns[0]], errors='coerce').fillna(0).astype(int)
         df_copy.iloc[:, 7] = df_copy.iloc[:, 7].apply(format_name)
         df_copy.iloc[:, 2] = df_copy.iloc[:, 1].str[0].str[0] + ". " + df_copy.iloc[:, 2].str[0]
-        df_copy.rename(columns={"Group Number": "#", "Last Name": "Team Lead", "Lesson 1" : "Week 1", 
-                                "Lesson 2" : "Week 2", "Lesson 3" : "Week 3", "Lesson 4" : "Week 4", 
-                                "Lesson 5" : "Week 5", "Lesson 6" : "Week 6"}, inplace=True)
+        df_copy.rename(columns={"Group Number": "#", 
+                                "Last Name": "Team Lead", 
+                                "Grade Level" : "Grd", 
+                                "Lesson 1" : "Week 1", 
+                                "Lesson 2" : "Week 2", 
+                                "Lesson 3" : "Week 3", 
+                                "Lesson 4" : "Week 4", 
+                                "Lesson 5" : "Week 5", 
+                                "Lesson 6" : "Week 6"}, inplace=True)
         df_copy = df_copy.applymap(lambda x: truncate_text(x, 9)) #truncate all to 9 char
         
         df_copy.iloc[:, 8] = df_copy.iloc[:,8].astype(str).str[:3]   #specifically truncate days 
-        df_copy = df_copy.iloc[:, [0, 2, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19]]
+        df_copy = df_copy.iloc[:, [i_gn, i_ln, i_tc, i_dy, i_st, i_et, i_l1, i_l2, i_l3, i_l4, i_l5, i_l6]]
         
         data = [df_copy.columns.tolist()] + df_copy.values.tolist()
         pdf = SimpleDocTemplate(output_pdf, pagesize=landscape(letter))
@@ -238,6 +277,7 @@ def reportGen(df):
                                  "Lesson 3": "Lesson", "Lesson 4": "Lesson", "Lesson 5": "Lesson", "Lesson 6": "Lesson"}, inplace=True)
         df_copy = df_copy.applymap(lambda x: truncate_text(x, 15))
     
+        # Adds 3 columns!!
         df_copy["Box #"] = ""
         df_copy["Time Out"] = ""
         df_copy["Additions"] = ""
@@ -254,7 +294,10 @@ def reportGen(df):
                 df_weekday = df_copy[df_copy.iloc[:, 8] == weekday]  # Assuming the weekday column is index 8
     
                 if not df_weekday.empty:
-                    df_checkout = df_weekday.iloc[:, [0, 9, 7, 13, 14 + i, 20, 21, 22]].copy()  # Add .copy()
+                    #Group #, start time, teacher, school. lesson, box #, time out, additions
+                    df_checkout = df_weekday.iloc[:, [i_gn, i_st, i_tc, i_sc, i_l1 + i, 21, 22, 23]].copy()  # Add .copy()
+                    
+                    #print(df_checkout)
                     
                     # Ensure "Lesson" column has no NaN values before processing
                     df_checkout["Lesson"] = df_checkout["Lesson"].fillna("Unknown")
@@ -271,7 +314,7 @@ def reportGen(df):
                         if lesson_title_first_word in quick_check["First_Word"].values:
                             df_checkout.loc[:, "Additions"] = df_checkout["Lesson"].str.split().str[0].map(quick_check.set_index("First_Word")["Pick-Up Additions"]).fillna(" ")
 
-                    # paragraph format to allow wrap
+                    # Paragraph format to allow wrap
                     df_checkout.loc[:, "Additions"] = df_checkout["Additions"].apply(lambda x: Paragraph(str(x), style=styles["Normal"]))
 
                     data = [df_checkout.columns.tolist()] + df_checkout.values.tolist()
@@ -301,11 +344,8 @@ def reportGen(df):
     
             pdf.build(elements)
 
-
-        
     create_checkout(df)
     
-
 # # ##### TEST CODE
 
 

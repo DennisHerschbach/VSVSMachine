@@ -11,7 +11,7 @@ import tkinter as tk
 from tkinter import messagebox
 import keyboard
 
-def send_email(driver, recipient, subject, message, cc_var):
+def send_email(driver, recipient, subject, message, cc_var, mac):
     # print(recipient)
     # print(subject)
     # print(message)
@@ -48,9 +48,20 @@ def send_email(driver, recipient, subject, message, cc_var):
         keyboard.write(message)
         time.sleep(1)
         
-        # Send
-        #keyboard.press_and_release("command+enter")  # macOS
-        # keyboard.press_and_release("ctrl+enter")  # 
+        confirmation = tk.messagebox.askquestion("Confirmation",  "Send email?")
+        
+        if confirmation:
+            # Send
+            if mac.get():
+                keyboard.press_and_release("command+enter")  # macOS
+            else:
+                keyboard.press_and_release("ctrl+enter")  # Windows
+                
+        else:
+            raise Exception("User cancelled email.")
+
+        #just wait to ensure email got sent 
+        time.sleep(8)
         
     except Exception as e:
         print(f"Error: {e}")
@@ -62,9 +73,14 @@ def email_wizard(root, driver, df):
         group_list = entry_email.get().split(",")
         
         for group in group_list:
-            result = df.loc[df['Group Number'] == int(group), 'Email']
-            if not result.empty:
-                email_list = result.values[0]
+            get_emails = df.loc[df['Group Number'] == int(group), 'Email']
+            teacher_email = df.loc[df['Group Number'] == int(group), 'Teacher Email']
+            if not get_emails.empty:
+                email_list = get_emails.values[0]
+                
+                # Add teacher email if box checked
+                if include_teacher:
+                    email_list.append(teacher_email[0])
                 
                 subject = entry_subject.get()
                 message = text_message.get("1.0", tk.END).strip()
@@ -84,6 +100,8 @@ def email_wizard(root, driver, df):
                                ", " + phones[0][j] + ", " + emails[0][j] + "\n")
                     
                 # Set up teacher block
+                group_num = str(int(group))
+                grade_level = df.loc[df['Group Number'] == int(group), 'Grade Level'].values
                 teacher = df.loc[df['Group Number'] == int(group), 'Teacher'].values
                 teacher_email = df.loc[df['Group Number'] == int(group), 'Teacher Email'].values
                 school = df.loc[df['Group Number'] == int(group), 'School'].values
@@ -92,7 +110,8 @@ def email_wizard(root, driver, df):
                 end_time = df.loc[df['Group Number'] == int(group), 'End Time'].values
                 
                 teacher_block = (
-                    "Teacher: " + teacher[0] + "\nEmail: " + teacher_email[0] + 
+                    "Group: " + group_num + "\nGrade Level: " + grade_level[0] + 
+                    "\nTeacher: " + teacher[0] + "\nEmail: " + teacher_email[0] + 
                     "\nSchool: " + school[0] + "\nDay: " + day[0] + 
                     "\nTime: " + start_time[0] + " - " + end_time[0]
                 )
@@ -103,7 +122,7 @@ def email_wizard(root, driver, df):
                 
                 if email_list and subject and message:
                     driver.switch_to.window(driver.window_handles[-1])
-                    send_email(driver, email_list, subject, message, cc_var)
+                    send_email(driver, email_list, subject, message, cc_var, mac)
                 else:
                     messagebox.showwarning("Warning", "All fields must be filled out!")
             else:
@@ -134,9 +153,20 @@ def email_wizard(root, driver, df):
     
     # Options section
     tk.Label(new_window, text="Options:").pack(pady=(10, 0))
+    
+    # Teacher
+    include_teacher = tk.BooleanVar(value=True)
+    teach_checkbox = tk.Checkbutton(new_window, text="Include teacher", variable=include_teacher)
+    teach_checkbox.pack()
+    
     cc_var = tk.BooleanVar(value=True)
     cc_checkbox = tk.Checkbutton(new_window, text="CC/BCC skip (see documentation)", variable=cc_var)
     cc_checkbox.pack()
+    
+    # Mac
+    mac = tk.BooleanVar(value=False)
+    mac_checkbox = tk.Checkbutton(new_window, text="Check if using MacOS", variable=mac)
+    mac_checkbox.pack()
     
 
 ####### FOR TESTING:
