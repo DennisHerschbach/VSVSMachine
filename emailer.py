@@ -48,17 +48,19 @@ def send_email(driver, recipient, subject, message, cc_var, mac):
         keyboard.write(message)
         time.sleep(1)
         
-        confirmation = tk.messagebox.askquestion("Confirmation",  "Send email?")
+        tk.messagebox.showinfo("Confirmation", "Click OK when email has been sent.")
         
-        if confirmation:
-            # Send
-            if mac.get():
-                keyboard.press_and_release("command+enter")  # macOS
-            else:
-                keyboard.press_and_release("ctrl+enter")  # Windows
+        #confirmation = tk.messagebox.askquestion("Confirmation",  "Send email?")
+        
+        # if confirmation:
+        #     # Send
+        #     if mac.get():
+        #         keyboard.press_and_release("command+enter")  # macOS
+        #     else:
+        #         keyboard.press_and_release("ctrl+enter")  # Windows
                 
-        else:
-            raise Exception("User cancelled email.")
+        # else:
+        #     raise Exception("User cancelled email.")
 
         #just wait to ensure email got sent 
         time.sleep(8)
@@ -72,6 +74,12 @@ def email_wizard(root, driver, df):
     def submit_email():
         group_list = entry_email.get().split(",")
         
+        if all_teams:
+            print("Emailing all teams")
+            values_list = df['Group Number'].tolist()
+            filtered_list = [x for x in values_list if x != 0]
+            group_list = [int(x) for x in filtered_list]
+            
         for group in group_list:
             get_emails = df.loc[df['Group Number'] == int(group), 'Email']
             teacher_email = df.loc[df['Group Number'] == int(group), 'Teacher Email']
@@ -100,7 +108,6 @@ def email_wizard(root, driver, df):
                                ", " + phones[0][j] + ", " + emails[0][j] + "\n")
                     
                 # Set up teacher block
-                group_num = str(int(group))
                 grade_level = df.loc[df['Group Number'] == int(group), 'Grade Level'].values
                 teacher = df.loc[df['Group Number'] == int(group), 'Teacher'].values
                 teacher_email = df.loc[df['Group Number'] == int(group), 'Teacher Email'].values
@@ -110,7 +117,7 @@ def email_wizard(root, driver, df):
                 end_time = df.loc[df['Group Number'] == int(group), 'End Time'].values
                 
                 teacher_block = (
-                    "Group: " + group_num + "\nGrade Level: " + grade_level[0] + 
+                    "Grade Level: " + str(grade_level[0]) + 
                     "\nTeacher: " + teacher[0] + "\nEmail: " + teacher_email[0] + 
                     "\nSchool: " + school[0] + "\nDay: " + day[0] + 
                     "\nTime: " + start_time[0] + " - " + end_time[0]
@@ -158,6 +165,11 @@ def email_wizard(root, driver, df):
     include_teacher = tk.BooleanVar(value=True)
     teach_checkbox = tk.Checkbutton(new_window, text="Include teacher", variable=include_teacher)
     teach_checkbox.pack()
+    
+    # Send email to ALL teams
+    all_teams = tk.BooleanVar(value=False)
+    all_checkbox = tk.Checkbutton(new_window, text="Email ALL teams (overrides Group # submission)", variable=all_teams)
+    all_checkbox.pack()
     
     cc_var = tk.BooleanVar(value=True)
     cc_checkbox = tk.Checkbutton(new_window, text="CC/BCC skip (see documentation)", variable=cc_var)
