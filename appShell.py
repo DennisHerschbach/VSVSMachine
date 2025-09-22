@@ -12,8 +12,8 @@ import sys
 import time
 from tkinter import messagebox
 from selenium import webdriver
-#from selenium.webdriver.chrome.service import Service
-#from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 
 # Import custom functions
@@ -26,14 +26,13 @@ df = None
 
 def email_instructions():
     try:
-        #driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
         driver.get("https://www.microsoft.com/en-us/microsoft-365/outlook/log-in")
         time.sleep(5)  # Allow webpage to load
         
         # Click sign-in button
-        driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div/div[2]/main/div/div/div/div[6]/div/div/div[2]/div[1]/div/div/div[1]/div/div/div[3]/div/a[1]").click()
+        #driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div/div[2]/main/div/div/div/div[6]/div/div/div[2]/div[1]/div/div/div[1]/div/div/div[3]/div/a[1]").click()
         
     except Exception as e:
         print(f"Error: {e}")

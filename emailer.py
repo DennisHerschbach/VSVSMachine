@@ -63,7 +63,7 @@ def send_email(driver, recipient, subject, message, cc_var, mac):
         #     raise Exception("User cancelled email.")
 
         #just wait to ensure email got sent 
-        time.sleep(8)
+        time.sleep(1)
         
     except Exception as e:
         print(f"Error: {e}")
@@ -82,7 +82,7 @@ def email_wizard(root, driver, df):
             
         for group in group_list:
             get_emails = df.loc[df['Group Number'] == int(group), 'Email']
-            teacher_email = df.loc[df['Group Number'] == int(group), 'Teacher Email']
+            teacher_email = df.loc[df['Group Number'] == int(group), 'Teacher Email'].values
             if not get_emails.empty:
                 email_list = get_emails.values[0]
                 
@@ -117,7 +117,7 @@ def email_wizard(root, driver, df):
                 end_time = df.loc[df['Group Number'] == int(group), 'End Time'].values
                 
                 teacher_block = (
-                    "Grade Level: " + str(grade_level[0]) + 
+                    "Grade Level: " + str(int(grade_level[0])) + 
                     "\nTeacher: " + teacher[0] + "\nEmail: " + teacher_email[0] + 
                     "\nSchool: " + school[0] + "\nDay: " + day[0] + 
                     "\nTime: " + start_time[0] + " - " + end_time[0]
