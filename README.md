@@ -3,4 +3,4 @@ Database management Python application for Vanderbilt Student Volunteers for Sci
 
 Automated generation of labels, documents, and emails.
 
-Detailed guide available in "GUIDE_VT2.docx" file
+Detailed guide available in "GUIDE_VT3.docx" file
