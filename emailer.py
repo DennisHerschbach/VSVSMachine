@@ -74,7 +74,7 @@ def email_wizard(root, driver, df):
     def submit_email():
         group_list = entry_email.get().split(",")
         
-        if all_teams:
+        if all_teams.get():
             print("Emailing all teams")
             values_list = df['Group Number'].tolist()
             filtered_list = [x for x in values_list if x != 0]
@@ -87,7 +87,7 @@ def email_wizard(root, driver, df):
                 email_list = get_emails.values[0]
                 
                 # Add teacher email if box checked
-                if include_teacher:
+                if include_teacher.get():
                     email_list.append(teacher_email[0])
                 
                 subject = entry_subject.get()
