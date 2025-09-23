@@ -46,7 +46,8 @@ def send_email(driver, recipient, subject, message, cc_var, mac):
         keyboard.press_and_release("tab")
         time.sleep(1)
         keyboard.write(message)
-        time.sleep(1)
+        # Upon testing on some machines, message box tabs off email and there is not enough time to write. 
+        time.sleep(10)
         
         tk.messagebox.showinfo("Confirmation", "Click OK when email has been sent.")
         
